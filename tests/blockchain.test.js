@@ -2,11 +2,7 @@ const Blockchain = require('../blockchain');
 const Block = require('../block');
 
 describe('Blockchain', () => {
-    let blockchain;
-
-    beforeEach(() => {
-        blockchain = new Blockchain();
-    });
+    const blockchain = new Blockchain();
 
     it('contains a `chain` Array instance', () => {
         expect(blockchain.chain instanceof Array).toBe(true);
@@ -22,8 +18,16 @@ describe('Blockchain', () => {
 
         expect(blockchain.chain[blockchain.chain.length - 1].data).toEqual(newData);
     });
+});
 
+describe('Blockchain', () => {
     describe('isValidChain()', () => {
+        let blockchain = null;
+
+        beforeEach(() => {
+            blockchain = new Blockchain();
+        });
+
         describe('when the chain does not start with the genesis block', () => {
             it('returns false', () => {
                 blockchain.chain[0] = { data: 'fake-geneis' };

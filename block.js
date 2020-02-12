@@ -19,7 +19,7 @@ class Block {
             timestamp,
             lastHash: lastBlock.hash,
             hash: cryptoHash(timestamp, data, lastBlock.hash),
-            data: data
+            data
         });
     }
 }

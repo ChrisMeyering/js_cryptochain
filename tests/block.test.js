@@ -5,14 +5,16 @@ describe('Block', () => {
     const timestamp = 'a-date';
     const lastHash = 'foo-hash';
     const hash = 'foo-lasthash';
-    const data = ['blockchain', 'data'];
+    const data = [
+        'blockchain',
+        'data'
+    ];
     const block = new Block({
         timestamp,
         lastHash,
         hash,
         data
     });
-
 
     it('has a `timestamp` property', () => {
         expect(block.timestamp).toEqual(timestamp);
@@ -29,7 +31,9 @@ describe('Block', () => {
     it('has a `data` property', () => {
         expect(block.data).toEqual(data);
     });
+});
 
+describe('Block', () => {
     describe('genesis()', () => {
         const genesisBlock = Block.genesis();
 
@@ -41,11 +45,14 @@ describe('Block', () => {
             expect(genesisBlock).toEqual(GENESIS_DATA);
         });
     });
+});
 
+describe('Block', () => {
     describe('mineBlock()', () => {
         const lastBlock = Block.genesis();
         const data = 'data to mine';
-        const minedBlock = Block.mineBlock({ lastBlock, data });
+        const minedBlock = Block.mineBlock({ lastBlock,
+            data });
 
         it('returns a Block instance', () => {
             expect(minedBlock instanceof Block).toBe(true);
@@ -64,9 +71,8 @@ describe('Block', () => {
         });
 
         it('creates a SHA-256 `hash` based on the proper inputs', () => {
-            expect(minedBlock.hash)
-                .toEqual(cryptoHash(minedBlock.timestamp, lastBlock.hash, data));
+            expect(minedBlock.hash).
+                toEqual(cryptoHash(minedBlock.timestamp, lastBlock.hash, data));
         });
     });
 });
-

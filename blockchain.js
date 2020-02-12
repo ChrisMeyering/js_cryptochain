@@ -29,9 +29,8 @@ class Blockchain {
             if (lastHash !== chain[i - 1].hash) {
                 return false;
             }
-            const expectedHash = cryptoHash(data, timestamp, lastHash);
             //validate block's hash
-            if (hash !== expectedHash) {
+            if (hash !== cryptoHash(data, timestamp, lastHash)) {
                 return false;
             }
         }
