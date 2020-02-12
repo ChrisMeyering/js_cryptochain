@@ -1,5 +1,5 @@
-const Block = require('../block'); 
-const {GENESIS_DATA} = require('../config');
+const Block = require('../block');
+const { GENESIS_DATA } = require('../config');
 const cryptoHash = require('../crypto-hash');
 describe('Block', () => {
     const timestamp = 'a-date';
@@ -32,11 +32,11 @@ describe('Block', () => {
 
     describe('genesis()', () => {
         const genesisBlock = Block.genesis();
-        
+
         it('returns a Block instance', () => {
             expect(genesisBlock instanceof Block).toBe(true);
         });
-        
+
         it('contains genesis data', () => {
             expect(genesisBlock).toEqual(GENESIS_DATA);
         });
@@ -45,7 +45,7 @@ describe('Block', () => {
     describe('mineBlock()', () => {
         const lastBlock = Block.genesis();
         const data = 'data to mine';
-        const minedBlock = Block.mineBlock({lastBlock, data});
+        const minedBlock = Block.mineBlock({ lastBlock, data });
 
         it('returns a Block instance', () => {
             expect(minedBlock instanceof Block).toBe(true);
@@ -65,8 +65,8 @@ describe('Block', () => {
 
         it('creates a SHA-256 `hash` based on the proper inputs', () => {
             expect(minedBlock.hash)
-            .toEqual(cryptoHash(minedBlock.timestamp, lastBlock.hash, data));
+                .toEqual(cryptoHash(minedBlock.timestamp, lastBlock.hash, data));
         });
     });
-}); 
+});
 

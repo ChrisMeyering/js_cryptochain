@@ -12,7 +12,8 @@ class Blockchain {
     addBlock({ data }) {
         const newBlock = Block.mineBlock({
             lastBlock: this.chain[this.chain.length - 1],
-            data})
+            data
+        })
         this.chain.push(newBlock);
     }
 
@@ -23,9 +24,9 @@ class Blockchain {
             return false;
         }
         for (let i = 1; i < chain.length; i++) {
-            const {timestamp, lastHash, hash, data} = chain[i];
+            const { timestamp, lastHash, hash, data } = chain[i];
             //validate block's lastHash
-            if (lastHash !== chain[i-1].hash) {
+            if (lastHash !== chain[i - 1].hash) {
                 return false;
             }
             const expectedHash = cryptoHash(data, timestamp, lastHash);
