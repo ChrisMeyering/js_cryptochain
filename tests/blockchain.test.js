@@ -63,3 +63,47 @@ describe('Blockchain', () => {
         });
     });
 });
+
+describe('Blockchain', () => {
+    describe('replaceChain()', () => {
+        let blockchain, newChain, originalChain;
+
+        beforeEach(() => {
+            blockchain = new Blockchain();
+            newChain = new Blockchain();
+            originalChain = blockchain.chain;
+        });
+
+        describe('when the new chain is not longer', () => {
+            it('does not replace the chain', () => {
+                newChain.chain[0] = { data: 'new chain' };
+                blockchain.replaceChain(newChain.chain);
+                expect(blockchain.chain).toEqual(originalChain);
+            });
+        });
+
+        describe('when the new chain is longer', () => {
+            beforeEach(() => {
+                newChain.addBlock({ data: 'Bears are big' });
+                newChain.addBlock({ data: 'Raccoons are cool' });
+                newChain.addBlock({ data: 'Sunks stink' });
+            });
+            describe('when the new chain is invalid', () => {
+                it('does not replace the chain', () => {
+                    newChain.chain[2].data = 'Raccoons are not cool';
+                    blockchain.replaceChain(newChain.chain);
+                    expect(blockchain.chain).toEqual(originalChain);
+                });
+            });
+
+            describe('when the new chain is valid', () => {
+                it('replaces the chain', () => {
+                    blockchain.replaceChain(newChain.chain)
+                    expect(blockchain).toEqual(newChain);
+                });
+            });
+        });
+
+
+    });
+});
