@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll"
+    "test": "jest --collect-coverage"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +14,7 @@
     "eslint-plugin-jest": "^23.7.0",
     "jest": "^25.1.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "hex-to-binary": "^1.0.1"
+  }
 }

@@ -1,5 +1,6 @@
 const Blockchain = require('../blockchain');
 const Block = require('../block');
+const cryptoHash = require('../crypto-hash');
 
 describe('Blockchain', () => {
     const blockchain = new Blockchain();
@@ -7,11 +8,9 @@ describe('Blockchain', () => {
     it('contains a `chain` Array instance', () => {
         expect(blockchain.chain instanceof Array).toBe(true);
     });
-
     it('starts with the genesis block', () => {
         expect(blockchain.chain[0]).toEqual(Block.genesis());
     });
-
     it('adds a new block to the chain', () => {
         const newData = 'new transaction';
         blockchain.addBlock({ data: newData });
@@ -23,7 +22,6 @@ describe('Blockchain', () => {
 describe('Blockchain', () => {
     describe('isValidChain()', () => {
         let blockchain = null;
-
         beforeEach(() => {
             blockchain = new Blockchain();
         });
@@ -49,12 +47,57 @@ describe('Blockchain', () => {
                 });
             })
 
+            describe('and the chain contains a block with a jumped difficulty', () => {
+                it('returns false', () => {
+                    const lastBlock = blockchain.chain[blockchain.chain.length - 1];
+                    const { lastHash } = lastBlock;
+                    const timestamp = Date.now;
+                    const nonce = 0;
+                    const data = [];
+                    const difficulty = lastBlock.difficulty + 15;
+                    const hash = cryptoHash(timestamp, lastHash, difficulty, nonce, data);
+                    const badBlock = new Block({
+                        timestamp,
+                        nonce,
+                        lastHash,
+                        hash,
+                        difficulty,
+                        data
+                    });
+                    blockchain.chain.push(badBlock);
+                    expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
+                })
+            });
+
             describe('and the chain contains a block with an invalid field', () => {
                 it('returns false', () => {
                     blockchain.chain[2].data = 'Raccoons are not cool';
                     expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
                 });
             });
+
+            describe('and the chain contains a block where the difficulty constraint is violated', () => {
+                it('returns false', () => {
+                    const lastBlock = blockchain.chain[blockchain.chain.length - 1];
+                    const lastHash = lastBlock.hash;
+                    const timestamp = Date.now();
+                    const nonce = 0;
+                    const data = [];
+                    const difficulty = lastBlock.difficulty - 1;
+                    const hash = cryptoHash(timestamp, lastHash, difficulty, nonce, data);
+                    const badBlock = new Block({
+                        timestamp,
+                        nonce,
+                        lastHash,
+                        hash,
+                        difficulty,
+                        data
+                    });
+                    blockchain.chain.push(badBlock);
+                    expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
+                })
+            });
+
             describe('and the chain does not contain any invalid blocks', () => {
                 it('returns true', () => {
                     expect(Blockchain.isValidChain(blockchain.chain)).toBe(true);
@@ -67,7 +110,6 @@ describe('Blockchain', () => {
 describe('Blockchain', () => {
     describe('replaceChain()', () => {
         let blockchain, newChain, originalChain;
-
         beforeEach(() => {
             blockchain = new Blockchain();
             newChain = new Blockchain();
@@ -88,6 +130,7 @@ describe('Blockchain', () => {
                 newChain.addBlock({ data: 'Raccoons are cool' });
                 newChain.addBlock({ data: 'Sunks stink' });
             });
+
             describe('when the new chain is invalid', () => {
                 it('does not replace the chain', () => {
                     newChain.chain[2].data = 'Raccoons are not cool';
