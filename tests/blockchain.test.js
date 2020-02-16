@@ -1,6 +1,6 @@
-const Blockchain = require('../blockchain');
-const Block = require('../block');
-const cryptoHash = require('../crypto-hash');
+const Blockchain = require('../src/blockchain');
+const Block = require('../src/block');
+const cryptoHash = require('../src/crypto-hash');
 
 describe('Blockchain', () => {
     const blockchain = new Blockchain();
