@@ -12,7 +12,7 @@ class Blockchain {
         const newBlock = Block.mineBlock({
             lastBlock: this.chain[this.chain.length - 1],
             data
-        })
+        });
         this.chain.push(newBlock);
     }
 
@@ -23,7 +23,7 @@ class Blockchain {
             return false;
         }
         for (let i = 1; i < chain.length; i++) {
-            if (Math.abs(chain[i].difficulty - chain[i-1].difficulty) !== 1) {
+            if (Math.abs(chain[i].difficulty - chain[i - 1].difficulty) !== 1) {
                 return false;
             }
             if (!Block.isValidBlock(chain[i], chain[i - 1].hash)) {

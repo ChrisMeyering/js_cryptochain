@@ -24,26 +24,32 @@ describe('Block', () => {
     });
 
     it('has a `timestamp` property', () => {
+        expect(block).toHaveProperty('timestamp');
         expect(block.timestamp).toEqual(timestamp);
     });
 
     it('has a `lastHash` property', () => {
+        expect(block).toHaveProperty('lastHash');
         expect(block.lastHash).toEqual(lastHash);
     });
 
     it('has a `hash` property', () => {
+        expect(block).toHaveProperty('hash');
         expect(block.hash).toEqual(hash);
     });
 
     it('has a `data` property', () => {
+        expect(block).toHaveProperty('data');
         expect(block.data).toEqual(data);
     });
 
     it('has a `nonce` property', () => {
+        expect(block).toHaveProperty('nonce');
         expect(block.nonce).toEqual(nonce);
     });
 
     it('has a `difficulty` property', () => {
+        expect(block).toHaveProperty('difficulty');
         expect(block.difficulty).toEqual(difficulty);
     });
 });
@@ -99,7 +105,7 @@ describe('Block', () => {
         it('sets a `hash` that matches the difficulty criteria', () => {
             expect(hexToBinary(minedBlock.hash).substring(0, minedBlock.difficulty)).
                 toEqual('0'.repeat(minedBlock.difficulty));
-        })
+        });
 
         it('adjusts the difficulty', () => {
             const possibleResults = [
@@ -146,6 +152,6 @@ describe('Block', () => {
         it('has a lower limit of 1', () => {
             block.difficulty = -1;
             expect(Block.adjustDifficulty({ originalBlock: block })).toEqual(1);
-        })
-    })
+        });
+    });
 });

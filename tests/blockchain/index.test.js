@@ -45,7 +45,7 @@ describe('Blockchain', () => {
                     blockchain.chain[2].lastHash = 'broken-lastHash';
                     expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
                 });
-            })
+            });
 
             describe('and the chain contains a block with a jumped difficulty', () => {
                 it('returns false', () => {
@@ -66,7 +66,7 @@ describe('Blockchain', () => {
                     });
                     blockchain.chain.push(badBlock);
                     expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
-                })
+                });
             });
 
             describe('and the chain contains a block with an invalid field', () => {
@@ -95,7 +95,7 @@ describe('Blockchain', () => {
                     });
                     blockchain.chain.push(badBlock);
                     expect(Blockchain.isValidChain(blockchain.chain)).toBe(false);
-                })
+                });
             });
 
             describe('and the chain does not contain any invalid blocks', () => {
@@ -141,7 +141,7 @@ describe('Blockchain', () => {
 
             describe('when the new chain is valid', () => {
                 it('replaces the chain', () => {
-                    blockchain.replaceChain(newChain.chain)
+                    blockchain.replaceChain(newChain.chain);
                     expect(blockchain).toEqual(newChain);
                 });
             });

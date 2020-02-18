@@ -26,7 +26,7 @@ class Block {
             timestamp = Date.now();
             difficulty = Block.adjustDifficulty({ originalBlock: lastBlock,
                 newTimestamp: timestamp });
-            hash = cryptoHash(timestamp, nonce, lastHash, data, difficulty)
+            hash = cryptoHash(timestamp, nonce, lastHash, data, difficulty);
         } while (hexToBinary(hash).substring(0, difficulty) !== '0'.repeat(difficulty));
         return new this({
             timestamp,
@@ -50,7 +50,7 @@ class Block {
         }
         //validate block's difficulty constraint
         if (hexToBinary(hash).substring(0, difficulty) !== '0'.repeat(difficulty)) {
-            return false
+            return false;
         }
 
         return true;

@@ -37,7 +37,7 @@ const syncChains = () => {
         } else {
             console.log('error:', error);
         }
-    })
+    });
 };
 
 let PEER_PORT;

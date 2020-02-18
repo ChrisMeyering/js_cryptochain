@@ -3,6 +3,7 @@
         "jest": true,
         "browser": true,
         "commonjs": true,
+        "node": true,
         "es6": true
     },
     "extends": "eslint:recommended",
@@ -80,7 +81,7 @@
         "implicit-arrow-linebreak": "error",
         "indent": "error",
         "indent-legacy": "error",
-        "init-declarations": "error",
+        "init-declarations": "warn",
         "jsx-quotes": "error",
         "key-spacing": "error",
         "keyword-spacing": "error",
@@ -248,7 +249,7 @@
         "require-jsdoc": "error",
         "require-unicode-regexp": "error",
         "rest-spread-spacing": "error",
-        "semi": "off",
+        "semi": "error",
         "semi-spacing": [
             "error",
             {
