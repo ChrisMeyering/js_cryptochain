@@ -119,7 +119,7 @@
         "no-caller": "error",
         "no-catch-shadow": "error",
         "no-confusing-arrow": "error",
-        "no-console": "error",
+        "no-console": "off",
         "no-constructor-return": "error",
         "no-continue": "error",
         "no-div-regex": "error",
@@ -171,7 +171,7 @@
                 "allowForLoopAfterthoughts": true
             }
         ],
-        "no-process-env": "error",
+        "no-process-env": "off",
         "no-process-exit": "error",
         "no-proto": "error",
         "no-restricted-globals": "error",
