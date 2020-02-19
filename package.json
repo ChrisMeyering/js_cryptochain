@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --collect-coverage",
+    "test": "jest",
+    "test-cover": "jest --collect-coverage",
     "start": "node index.js",
     "dev": "npm run start-redis && node index.js",
     "dev-peer": "cross-env GENERATE_PEER_PORT='true' node index.js",
