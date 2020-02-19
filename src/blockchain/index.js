@@ -37,13 +37,15 @@ class Blockchain {
     }
 
     replaceChain(newChain) {
+        const replaceFailed = (reason) => console.error(`Failed to replace chain: ${reason}`);
+
         if (newChain.length <= this.chain.length) {
-            console.error('Failed to replace chain: original chain is longer');
-        }
-        if (Blockchain.isValidChain(newChain)) {
-            this.chain = newChain;
+            replaceFailed('the incoming chain must be longer');
+        } else if (Blockchain.isValidChain(newChain) === false) {
+            replaceFailed('the incoming chain contains invalid block(s)');
         } else {
-            console.error('Failed to replace chain: chain contains invalid block(s)');
+            console.log('replacing chain with:\n', newChain);
+            this.chain = newChain;
         }
     }
 }
