@@ -148,8 +148,11 @@ describe('Blockchain', () => {
 
             describe('when the new chain is valid', () => {
                 it('replaces the chain', () => {
+                    const logMock = jest.fn();
+                    global.console.log = logMock;
                     blockchain.replaceChain(newChain.chain);
                     expect(blockchain).toEqual(newChain);
+                    expect(logMock).toHaveBeenCalled();
                 });
             });
         });
