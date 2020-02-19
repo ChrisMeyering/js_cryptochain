@@ -42,14 +42,17 @@ class Block {
         const { timestamp, nonce, lastHash, hash, difficulty, data } = block;
         //validate block's lastHash
         if (lastHash !== lastBlockHash) {
+            // console.error(`Invalid lastHash reverence. Expected ${lastBlockHash}, got ${lastHash}`);
             return false;
         }
         //validate block's hash
         if (hash !== cryptoHash(data, timestamp, lastHash, nonce, difficulty)) {
+            // console.error(`Block hash is invalid: ${hash}`);
             return false;
         }
         //validate block's difficulty constraint
         if (hexToBinary(hash).substring(0, difficulty) !== '0'.repeat(difficulty)) {
+            // console.error('Hash does not respect difficulty constraint');
             return false;
         }
 

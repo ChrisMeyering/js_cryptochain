@@ -110,6 +110,7 @@ describe('Blockchain', () => {
 describe('Blockchain', () => {
     describe('replaceChain()', () => {
         let blockchain, newChain, originalChain;
+
         beforeEach(() => {
             blockchain = new Blockchain();
             newChain = new Blockchain();
@@ -118,9 +119,12 @@ describe('Blockchain', () => {
 
         describe('when the new chain is not longer', () => {
             it('does not replace the chain', () => {
+                const errorMock = jest.fn();
+                global.console.error = errorMock;
                 newChain.chain[0] = { data: 'new chain' };
                 blockchain.replaceChain(newChain.chain);
                 expect(blockchain.chain).toEqual(originalChain);
+                expect(errorMock).toHaveBeenCalled();
             });
         });
 
@@ -133,9 +137,12 @@ describe('Blockchain', () => {
 
             describe('when the new chain is invalid', () => {
                 it('does not replace the chain', () => {
+                    const errorMock = jest.fn();
+                    global.console.error = errorMock;
                     newChain.chain[2].data = 'Raccoons are not cool';
                     blockchain.replaceChain(newChain.chain);
                     expect(blockchain.chain).toEqual(originalChain);
+                    expect(errorMock).toHaveBeenCalled();
                 });
             });
 
