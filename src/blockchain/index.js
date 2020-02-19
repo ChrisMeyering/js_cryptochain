@@ -43,7 +43,7 @@ class Blockchain {
         if (Blockchain.isValidChain(newChain)) {
             this.chain = newChain;
         } else {
-            console.error('^-- Failed to replace chain: chain contains invalid block(s)');
+            console.error('Failed to replace chain: chain contains invalid block(s)');
         }
     }
 }
