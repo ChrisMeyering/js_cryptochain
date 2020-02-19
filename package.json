@@ -10,6 +10,9 @@
     "dev-peer": "cross-env GENERATE_PEER_PORT='true' node index.js",
     "start-redis": "redis-server --daemonize yes"
   },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -25,6 +28,7 @@
     "express": "^4.17.1",
     "hex-to-binary": "^1.0.1",
     "redis": "^3.0.2",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "uuid": "^3.4.0"
   }
 }
