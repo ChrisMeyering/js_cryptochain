@@ -13,15 +13,26 @@ describe('TransactionPool', () => {
             recipient: new Wallet().publicKey,
             amount: 50
         });
+        transactionPool.setTransaction(transaction);
     });
 
     describe('setTransaction()', () => {
         it('adds a transaction', () => {
-            transactionPool.setTransaction(transaction);
             expect(transactionPool.transactionMap[transaction.id]).
                 toBe(transaction);
         });
-        
+    });
 
+    describe('existingTransaction()', () => {
+        it('returns an existing transaction given an `inputAddress`', () => {
+            expect(transactionPool.existingTransaction({
+                inputAddress: transaction.input.address
+            })).toBe(transaction);
+        });
+        it('returns undefined if `inputAddress` does not match any existing transaction input', () => {
+            expect(transactionPool.existingTransaction({
+                inputAddress: 'fake address'
+            })).toBeUndefined();
+        });
     });
 });
