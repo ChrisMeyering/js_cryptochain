@@ -55,7 +55,6 @@ class Block {
             // console.error('Hash does not respect difficulty constraint');
             return false;
         }
-
         return true;
     }
 
