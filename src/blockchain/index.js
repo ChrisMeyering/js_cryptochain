@@ -44,7 +44,6 @@ class Blockchain {
         } else if (Blockchain.isValidChain(newChain) === false) {
             replaceFailed('the incoming chain contains invalid block(s)');
         } else {
-            console.log('replacing chain with:\n', newChain);
             this.chain = newChain;
         }
     }
