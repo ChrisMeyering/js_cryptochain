@@ -39,6 +39,16 @@ describe('Wallet', () => {
             });
         });
 
+        describe('when the amount is negative', () => {
+            it('throws an error', () => {
+                const wallet = new Wallet();
+                expect(() => wallet.createTransaction({
+                    recipient: 'foo',
+                    amount: -1
+                })).toThrow('Amount must be positive');
+            });
+        });
+
         describe('when the amount is valid', () => {
             const amount = 50;
             const recipient = 'foo';
