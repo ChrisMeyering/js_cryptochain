@@ -78,12 +78,13 @@ describe('Blockchain', () => {
 
             describe('and the chain contains a block where the difficulty constraint is violated', () => {
                 it('returns false', () => {
+                    blockchain = new Blockchain();
                     const lastBlock = blockchain.chain[blockchain.chain.length - 1];
                     const lastHash = lastBlock.hash;
-                    const timestamp = Date.now();
+                    const timestamp = new Date(2020, 1, 1);
                     const nonce = 0;
                     const data = [];
-                    const difficulty = lastBlock.difficulty - 1;
+                    const difficulty = lastBlock.difficulty + 1;
                     const hash = cryptoHash(timestamp, lastHash, difficulty, nonce, data);
                     const badBlock = new Block({
                         timestamp,
