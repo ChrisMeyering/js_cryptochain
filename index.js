@@ -6,14 +6,21 @@ const Blockchain = require('./src/blockchain');
 const PubSub = require('./src/app/pubsub');
 const TransactionPool = require('./src/wallet/transaction-pool');
 const Wallet = require('./src/wallet');
+const TransactionMiner = require('./src/app/transaction-miner');
 
 const app = express();
 const blockchain = new Blockchain();
 const transactionPool = new TransactionPool();
 const wallet = new Wallet();
-
 const pubsub = new PubSub({
     transactionPool,
+    blockchain
+});
+
+const transactionMiner = new TransactionMiner({
+    wallet,
+    transactionPool,
+    pubsub,
     blockchain
 });
 
@@ -36,6 +43,12 @@ app.post('/api/mine', (req, res) => {
 
 app.post('/api/transact', (req, res) => {
     const { recipient, amount } = req.body;
+    if (wallet.publicKey === recipient) {
+        return res.status(403).json({
+            type: 'error',
+            message: `Sender and recipient have the same address: ${wallet.publicKey}`
+        });
+    }
     let transaction = transactionPool.existingTransaction({
         inputAddress: wallet.publicKey
     });
@@ -50,6 +63,7 @@ app.post('/api/transact', (req, res) => {
         } else {
             transaction = wallet.createTransaction({
                 recipient,
+                chain: blockchain.chain,
                 amount
             });
         }
@@ -70,6 +84,22 @@ app.post('/api/transact', (req, res) => {
 
 app.get('/api/transaction-pool-map', (req, res) => {
     res.status(200).json(transactionPool.transactionMap);
+});
+
+app.get('/api/mine-transactions', (req, res) => {
+    transactionMiner.mineTransactions();
+    res.redirect('/api/blocks');
+});
+
+app.get('/api/wallet-info', (req, res) => {
+    const address = wallet.publicKey;
+    res.status(200).json({
+        balance: Wallet.calculateBalance({
+            chain: blockchain.chain,
+            address
+        }),
+        address
+    });
 });
 
 const syncChains = () => {
