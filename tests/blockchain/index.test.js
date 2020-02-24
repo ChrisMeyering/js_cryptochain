@@ -1,7 +1,8 @@
 const Blockchain = require('../../src/blockchain');
 const Block = require('../../src/blockchain/block');
 const { cryptoHash } = require('../../src/util');
-
+const Wallet = require('../../src/wallet');
+const Transaction = require('../../src/wallet/transaction');
 describe('Blockchain', () => {
     const blockchain = new Blockchain();
 
@@ -131,19 +132,48 @@ describe('Blockchain', () => {
 
         describe('when the new chain is longer', () => {
             beforeEach(() => {
-                newChain.addBlock({ data: 'Bears are big' });
-                newChain.addBlock({ data: 'Raccoons are cool' });
-                newChain.addBlock({ data: 'Sunks stink' });
+                const wallet = new Wallet();
+                const transaction1 = wallet.createTransaction({
+                    recipient: new Wallet().publicKey,
+                    amount: 65
+                });
+                const transaction2 = wallet.createTransaction({
+                    recipient: new Wallet().publicKey,
+                    amount: 115
+                });
+                const transaction3 = wallet.createTransaction({
+                    recipient: new Wallet().publicKey,
+                    amount: 10
+                });
+                const rewardTransaction = Transaction.rewardTransaction({ minerWallet: wallet });
+
+                newChain.addBlock({ data: [
+                    transaction1,
+                    rewardTransaction
+                ] });
+                newChain.addBlock({ data: [
+                    transaction2,
+                    rewardTransaction
+                ] });
+                newChain.addBlock({ data: [
+                    transaction3,
+                    rewardTransaction
+                ] });
             });
 
             describe('when the new chain is invalid', () => {
                 it('does not replace the chain', () => {
                     const errorMock = jest.fn();
+                    const actualError = global.console.eror;
                     global.console.error = errorMock;
-                    newChain.chain[2].data = 'Raccoons are not cool';
+                    newChain.chain[2].data = new Wallet().createTransaction({
+                        recipient: new Wallet().publicKey,
+                        amount: 10
+                    });
                     blockchain.replaceChain(newChain.chain);
                     expect(blockchain.chain).toEqual(originalChain);
                     expect(errorMock).toHaveBeenCalled();
+                    global.console.error = actualError;
                 });
             });
 
@@ -154,7 +184,130 @@ describe('Blockchain', () => {
                 });
             });
         });
+    });
+});
 
+describe('Blockchain', () => {
+    describe('validTransactionData()', () => {
+        let blockchain, newBlockchain, rewardTransaction, transaction, wallet;
+
+        beforeEach(() => {
+            blockchain = new Blockchain();
+            newBlockchain = new Blockchain();
+            wallet = new Wallet();
+            transaction = wallet.createTransaction({
+                recipient: new Wallet().publicKey,
+                amount: 65
+            });
+            rewardTransaction = Transaction.rewardTransaction({ minerWallet: wallet });
+        });
+
+        describe('when the transaction data is invalid', () => {
+            let errorMock;
+            const actualError = global.console.error;
+            beforeEach(() => {
+                errorMock = jest.fn();
+                global.console.error = errorMock;
+            });
+
+            afterEach(() => {
+                expect(blockchain.validTransactionData({ chain: newBlockchain.chain })).toBe(false);
+                expect(errorMock).toHaveBeenCalled();
+                global.console.error = actualError;
+            });
+
+            /*
+             * describe('it contains no reward', () => {
+             * });
+             */
+            describe('it contains multiple rewards', () => {
+                it('returns false and logs an error', () => {
+                    newBlockchain.addBlock({
+                        data: [
+                            transaction,
+                            rewardTransaction,
+                            rewardTransaction
+                        ]
+                    });
+                });
+            });
+
+            describe('the transaction contains at least one malformed outputMap', () => {
+                describe('and the malformed transaction is not a reward transaction', () => {
+                    it('returns false and logs an error', () => {
+                        transaction.outputMap[wallet.publicKey] = 999999;
+                        newBlockchain.addBlock({
+                            data: [
+                                transaction,
+                                rewardTransaction
+                            ]
+                        });
+                    });
+                });
+
+                describe('and the malformed transaction is a reward transaction ', () => {
+                    it('returns false and logs an error', () => {
+                        rewardTransaction.outputMap[wallet.publicKey] = 1000;
+                        newBlockchain.addBlock({
+                            data: [
+                                transaction,
+                                rewardTransaction
+                            ]
+                        });
+                    });
+                });
+            });
+
+            describe('the transaction contains at least one malformed input', () => {
+                it('returns false and logs an error', () => {
+                    wallet.balance = 9000;
+                    const outputMap = {
+                        [wallet.publicKey]: 8900,
+                        fooRecipient: 100
+                    };
+                    const evilTransaction = {
+                        outputMap,
+                        input: {
+                            timestamp: Date.now(),
+                            signature: wallet.sign(outputMap),
+                            amount: wallet.balance,
+                            address: wallet.publicKey
+                        }
+                    };
+                    newBlockchain.addBlock({
+                        data: [
+                            transaction,
+                            evilTransaction,
+                            rewardTransaction
+                        ]
+                    });
+                });
+            });
+
+            describe('it contains duplicate transactions', () => {
+                it('returns false and logs an error', () => {
+                    newBlockchain.addBlock({
+                        data: [
+                            transaction,
+                            transaction,
+                            rewardTransaction
+                        ]
+                    });
+                });
+            });
+        });
+
+        describe('when the transaction data is valid', () => {
+            it('returns true', () => {
+                newBlockchain.addBlock({
+                    data: [
+                        transaction,
+                        rewardTransaction
+                    ]
+                });
+                expect(blockchain.validTransactionData({ chain: newBlockchain.chain })).toBe(true);
+            });
+        });
 
     });
 });
