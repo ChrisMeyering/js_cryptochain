@@ -1,6 +1,7 @@
 const Transaction = require('../../src/wallet/transaction');
 const Wallet = require('../../src/wallet');
 const { verifySignature } = require('../../src/util');
+const { MINING_REWARD, REWARD_INPUT } = require('../../src/config/wallet');
 
 const setup = () => {
     const senderWallet = new Wallet();
@@ -114,20 +115,35 @@ describe('Transaction', () => {
 describe('Transaction', () => {
     describe('update()', () => {
         describe('and the amount is invalid', () => {
-            const { transaction, senderWallet, recipient } = setup();
-
-            it('throws and error', () => {
-                expect(() => transaction.update({
-                    senderWallet,
-                    recipient,
-                    amount: 999999
-                })).toThrow('Amount exceeds balance');
-
-                expect(() => transaction.update({
-                    senderWallet,
-                    recipient,
-                    amount: -10
-                })).toThrow('Amount must be positive');
+            describe('when the amount exceeds wallet balance', () => {
+                it('throws and error', () => {
+                    const { transaction, senderWallet, recipient } = setup();
+                    expect(() => transaction.update({
+                        senderWallet,
+                        recipient,
+                        amount: 999999
+                    })).toThrow('Amount exceeds balance');
+                });
+            });
+            describe('when the amount is not positive', () => {
+                it('throws an error', () => {
+                    const { transaction, senderWallet, recipient } = setup();
+                    expect(() => transaction.update({
+                        senderWallet,
+                        recipient,
+                        amount: -10
+                    })).toThrow('Amount must be positive');
+                });
+            });
+            describe('when the `recipient` address equals `senderWallet.publicKey`', () => {
+                it('throws an error', () => {
+                    const { transaction, senderWallet } = setup();
+                    expect(() => transaction.update({
+                        senderWallet,
+                        recipient: senderWallet.publicKey,
+                        amount: 500
+                    })).toThrow(`Sender and recipient have the same address: ${senderWallet.publicKey}`);
+                });
             });
         });
 
@@ -200,6 +216,25 @@ describe('Transaction', () => {
                         toEqual(originalSenderOutput - nextAmount - addedAmount);
                 });
             });
+        });
+    });
+});
+
+describe('Transactoin', () => {
+    describe('rewardTransaction()', () => {
+        let minerWallet, rewardTransaction;
+
+        beforeEach(() => {
+            minerWallet = new Wallet();
+            rewardTransaction = Transaction.rewardTransaction({ minerWallet });
+        });
+
+        it('creates a reward transaction with the reward input', () => {
+            expect(rewardTransaction.input).toEqual(REWARD_INPUT);
+        });
+
+        it('creates one transaction for the miner with the `MINING_REWARD`', () => {
+            expect(rewardTransaction.outputMap[minerWallet.publicKey]).toEqual(MINING_REWARD);
         });
     });
 });
