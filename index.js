@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
 const express = require('express');
+const path = require('path');
 const request = require('request');
 
 const Blockchain = require('./src/blockchain');
@@ -29,6 +30,7 @@ const ROOT_NODE_ADDRESS = `http://localhost:${DEFAULT_PORT}`;
 
 app.use(bodyParser.json());
 
+app.use(express.static(path.join(__dirname, 'client/dist')));
 app.get('/api/blocks', (req, res) => {
     res.status(200).json(blockchain.chain);
 });
@@ -100,6 +102,10 @@ app.get('/api/wallet-info', (req, res) => {
         }),
         address
     });
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/dist/index.html'));
 });
 
 const syncChains = () => {
